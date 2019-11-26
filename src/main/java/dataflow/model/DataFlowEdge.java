@@ -1,7 +1,7 @@
 /*
- * Copyright 2019 by Daan van den Heuvel.
+ * Copyright 2018 by Daan van den Heuvel.
  *
- * This file is part of JavaForger.
+ * This file is part of JavaDataFlow.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@ public class DataFlowEdge {
   public void setTo(DataFlowNode to) {
     this.to = to;
   }
-  
+
   @Override
   public String toString() {
     return from.getName() + "->" + to.getName();

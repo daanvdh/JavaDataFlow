@@ -1,7 +1,7 @@
 /*
- * Copyright 2019 by Daan van den Heuvel.
+ * Copyright 2018 by Daan van den Heuvel.
  *
- * This file is part of JavaForger.
+ * This file is part of JavaDataFlow.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,10 @@ import dataflow.model.ParameterList;
 /**
  * Builder for {@link DataFlowGraph}, only to be used for test purposes.
  *
- * @author User
+ * @author Daan
+ * @deprecated This class can only build simple graphs, use the normal setters, constructors and builders of the JavaDataFlow classes.
  */
+@Deprecated
 public class GraphBuilder {
 
   private List<NodeBuilder> startNodes = new ArrayList<>();
