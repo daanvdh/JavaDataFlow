@@ -43,9 +43,6 @@ public class NodeCall extends OwnedNode<Node> {
    * {@link DataFlowMethod}. Can be null if method does not have any input.
    */
   private ParameterList in;
-  /** The {@link ParameterList}s that contain the {@link DataFlowNode}s that where used as input for a call to another {@link DataFlowMethod}. */
-  // TODO should probably be removed since this data is already contained in calledMethod
-  private ParameterList out;
   /** The method/constructor/codeBlock from which the method is called */
   private OwnedNode<?> owner;
   /** The called method, this can be null in case that the given method is not parsed. */
@@ -73,7 +70,6 @@ public class NodeCall extends OwnedNode<Node> {
     if (builder.in != null) {
       this.setIn(builder.in);
     }
-    this.out = builder.out == null ? this.out : builder.out;
     this.owner = builder.owner == null ? this.owner : builder.owner;
     this.calledMethod = builder.calledMethod == null ? this.calledMethod : builder.calledMethod;
     this.claz = builder.claz == null ? this.claz : builder.claz;
@@ -93,14 +89,6 @@ public class NodeCall extends OwnedNode<Node> {
   public final void setIn(ParameterList in) {
     this.in = in;
     in.setOwnerAndName(this);
-  }
-
-  public ParameterList getOut() {
-    return this.out;
-  }
-
-  public void setOut(ParameterList out) {
-    this.out = out;
   }
 
   public Optional<DataFlowMethod> getCalledMethod() {
@@ -183,21 +171,21 @@ public class NodeCall extends OwnedNode<Node> {
       equals = true;
     } else if (obj != null && getClass() == obj.getClass()) {
       NodeCall other = (NodeCall) obj;
-      equals = new EqualsBuilder().appendSuper(super.equals(obj)).append(in, other.in).append(out, other.out).append(calledMethod, other.calledMethod)
-          .append(claz, other.claz).append(peckage, other.peckage).isEquals();
+      equals = new EqualsBuilder().appendSuper(super.equals(obj)).append(in, other.in).append(calledMethod, other.calledMethod).append(claz, other.claz)
+          .append(peckage, other.peckage).isEquals();
     }
     return equals;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(in, out, calledMethod, claz, peckage);
+    return Objects.hash(in, calledMethod, claz, peckage);
   }
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString()).append("in", in).append("out", out)
-        .append("calledMethod", calledMethod).append("returnNode", returnNode).append("class", claz).append("package", peckage).build();
+    return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).appendSuper(super.toString()).append("in", in).append("calledMethod", calledMethod)
+        .append("returnNode", returnNode).append("class", claz).append("package", peckage).build();
   }
 
   /**
@@ -205,7 +193,6 @@ public class NodeCall extends OwnedNode<Node> {
    */
   public static final class Builder extends NodeRepresenter.Builder<Node, NodeCall.Builder> {
     private ParameterList in;
-    private ParameterList out;
     private OwnedNode<?> owner;
     private DataFlowMethod calledMethod;
     private String claz;
@@ -223,11 +210,6 @@ public class NodeCall extends OwnedNode<Node> {
 
     public Builder in(DataFlowNode... inputNodes) {
       this.in = ParameterList.builder().nodes(inputNodes).build();
-      return this;
-    }
-
-    public Builder out(ParameterList out) {
-      this.out = out;
       return this;
     }
 

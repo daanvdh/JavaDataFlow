@@ -36,7 +36,6 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 @RunWith(MockitoJUnitRunner.class)
 public class NodeCallTest {
   private static final ParameterList IN = ParameterList.builder().name("n").build();
-  private static final ParameterList OUT = ParameterList.builder().name("a").build();
   private static final OwnedNode<?> OWNER = DataFlowNode.builder().build();
   private static final DataFlowMethod CALLED_METHOD = DataFlowMethod.builder().build();
   private static final String CLAZ = "a";
@@ -48,7 +47,6 @@ public class NodeCallTest {
     NodeCall nodeCall = NodeCall.builder().owner(OWNER).build();
 
     Assert.assertFalse("Unexpected in", nodeCall.getIn().isPresent());
-    Assert.assertNull("Unexpected out", nodeCall.getOut());
     Assert.assertTrue("Unexpected owner", nodeCall.getOwner().isPresent());
     Assert.assertFalse("Unexpected calledMethod", nodeCall.getCalledMethod().isPresent());
     Assert.assertNull("Unexpected claz", nodeCall.getClaz());
@@ -60,7 +58,6 @@ public class NodeCallTest {
     NodeCall nodeCall = createAndFillBuilder().build();
 
     Assert.assertEquals("Unexpected in", IN, nodeCall.getIn().get());
-    Assert.assertEquals("Unexpected out", OUT, nodeCall.getOut());
     Assert.assertEquals("Unexpected owner", OWNER, nodeCall.getOwner().get());
     Assert.assertEquals("Unexpected calledMethod", Optional.of(CALLED_METHOD), nodeCall.getCalledMethod());
     Assert.assertEquals("Unexpected claz", CLAZ, nodeCall.getClaz());
@@ -78,7 +75,6 @@ public class NodeCallTest {
   @Test
   public void testEquals_Different() {
     verifyEqualsDifferent(NodeCall.Builder::in, ParameterList.builder().representedNode(REPRESENTED_NODE).build());
-    verifyEqualsDifferent(NodeCall.Builder::out, ParameterList.builder().representedNode(REPRESENTED_NODE).build());
     verifyEqualsDifferent(NodeCall.Builder::calledMethod, DataFlowMethod.builder().name("x").build());
     verifyEqualsDifferent(NodeCall.Builder::claz, "b");
     verifyEqualsDifferent(NodeCall.Builder::peckage, "d");
@@ -95,14 +91,13 @@ public class NodeCallTest {
   @Test
   public void testHashCode_Different() {
     verifyHashCode_Different(NodeCall.Builder::in, ParameterList.builder().representedNode(REPRESENTED_NODE).build());
-    verifyHashCode_Different(NodeCall.Builder::out, ParameterList.builder().representedNode(REPRESENTED_NODE).build());
     verifyHashCode_Different(NodeCall.Builder::calledMethod, DataFlowMethod.builder().name("x").build());
     verifyHashCode_Different(NodeCall.Builder::claz, "b");
     verifyHashCode_Different(NodeCall.Builder::peckage, "d");
   }
 
   private NodeCall.Builder createAndFillBuilder() {
-    return NodeCall.builder().in(IN).out(OUT).owner(OWNER).calledMethod(CALLED_METHOD).claz(CLAZ).peckage(PECKAGE);
+    return NodeCall.builder().in(IN).owner(OWNER).calledMethod(CALLED_METHOD).claz(CLAZ).peckage(PECKAGE);
   }
 
   private <T> void verifyEqualsDifferent(BiFunction<NodeCall.Builder, T, NodeCall.Builder> withMapper, T argument) {
