@@ -23,9 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodLikeDeclaration;
 import com.github.javaparser.resolution.types.ResolvedType;
@@ -35,6 +33,7 @@ import dataflow.model.DataFlowMethod;
 import dataflow.model.DataFlowNode;
 import dataflow.model.NodeCall;
 import dataflow.model.OwnedNode;
+import dataflow.model.OwnerNode;
 
 /**
  * Class for resolving {@link DataFlowMethod}s and {@link DataFlowNode}s from {@link Node}s and {@link DataFlowGraph}s.
@@ -46,22 +45,30 @@ public class NodeCallFactory {
 
   private ParserUtil parserUtil = new ParserUtil();
 
-  public Optional<NodeCall> create(OwnedNode<?> owner, MethodCallExpr node) {
+  /**
+   * Creates a {@link NodeCall}.
+   *
+   * @param owner The direct {@link OwnerNode} for the {@link NodeCall} to be created.
+   * @param node The {@link MethodCallExpr} that will be represented by the created {@link NodeCall}.
+   * @param instance The {@link DataFlowNode} on which the call was executed.
+   * @return created {@link NodeCall}.
+   */
+  public Optional<NodeCall> create(OwnedNode<?> owner, MethodCallExpr node, DataFlowNode instance) {
     Object resolved = parserUtil.resolve(owner, node);
 
     NodeCall resolvedMethod = null;
     if (resolved instanceof ResolvedMethodLikeDeclaration) {
-      resolvedMethod = createMethodCall(owner, (ResolvedMethodLikeDeclaration) resolved, node);
+      resolvedMethod = createMethodCall(owner, (ResolvedMethodLikeDeclaration) resolved, node, instance);
     } else {
       LOG.warn("In method {}, resolving is not supported for node {} of type {}", owner.getName(), node, resolved == null ? null : resolved.getClass());
     }
     return Optional.ofNullable(resolvedMethod);
   }
 
-  private NodeCall createMethodCall(OwnedNode<?> owner, ResolvedMethodLikeDeclaration resolved, MethodCallExpr node) {
+  private NodeCall createMethodCall(OwnedNode<?> owner, ResolvedMethodLikeDeclaration resolved, MethodCallExpr node, DataFlowNode instance) {
     NodeCall methodCall =
         NodeCall.builder().name(resolved.getName()).claz(resolved.getClassName()).peckage(resolved.getPackageName()).owner(owner).representedNode(node).build();
-    setInstanceName(methodCall, node);
+    methodCall.setInstance(instance);
     setReturn(methodCall, owner, node, resolved);
     return methodCall;
   }
@@ -75,15 +82,6 @@ public class NodeCallFactory {
       }
     } else {
       LOG.warn("Not supported to create return node in NodeCall from resolved node of type {} in method {}", rmd.getClass(), method.getName());
-    }
-  }
-
-  private void setInstanceName(NodeCall methodCall, MethodCallExpr node) {
-    Optional<Expression> scope = node.getScope();
-    if (scope.isPresent()) {
-      if (scope.get() instanceof NameExpr) {
-        methodCall.setInstanceName(((NameExpr) scope.get()).getNameAsString());
-      }
     }
   }
 

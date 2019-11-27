@@ -60,8 +60,9 @@ public class NodeCallFactoryTest {
     List<MethodCallExpr> methodCalls = cu.findAll(MethodCallExpr.class);
     DataFlowMethod method = DataFlowMethod.builder().name("met").build();
     MethodCallExpr node = methodCalls.get(0);
+    DataFlowNode instance = DataFlowNode.builder().name("inst").build();
 
-    Optional<NodeCall> resultMethod = sut.create(method, node);
+    Optional<NodeCall> resultMethod = sut.create(method, node, instance);
 
     MethodCallExpr expectedRepresentedNode = cu.findAll(MethodCallExpr.class).get(0);
     DataFlowNode expectedDfn = DataFlowNode.builder().name("nodeCall_append_return").representedNode(expectedRepresentedNode).build();
@@ -71,7 +72,7 @@ public class NodeCallFactoryTest {
     Assert.assertTrue(resultMethod.isPresent());
     Assert.assertEquals("append", resultMethod.get().getName());
     Assert.assertEquals(expectedDfn, resultMethod.get().getReturnNode().get());
-    Assert.assertEquals("Unexpected instanceName", "sb", resultMethod.get().getInstanceName().get());
+    Assert.assertEquals("Unexpected instanceName", instance, resultMethod.get().getInstance().get());
     Assert.assertEquals(expectedDfm, resultMethod.get());
   }
 
