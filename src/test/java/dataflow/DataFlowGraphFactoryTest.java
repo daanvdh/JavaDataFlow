@@ -302,12 +302,14 @@ public class DataFlowGraphFactoryTest {
     DataFlowNode sb1 = dfnTest.createField(cu, "sb1");
     DataFlowNode sbUsage = dfnTest.createNode(cu, "sb", NameExpr.class, 1);
     DataFlowNode sb1Usage = dfnTest.createNode(cu, "sb1", NameExpr.class, 0);
+    sbUsage.setOwner(sb1_call);
     this.connectNodesInSquence(sb, sbUsage);
     this.connectNodesInSquence(sb1, sb1Usage);
 
     DataFlowNode a = dfnTest.createParameter(cu, "a");
     DataFlowNode specificReturnCaller = dfnTest.createSpecificReturn(cu, "caller");
     DataFlowNode genericReturnCaller = dfnTest.createMethodReturn(cu, "caller");
+
     DataFlowMethod caller = createMethod("caller").inputParameters(a).nodes(specificReturnCaller, sbUsage, sb1Usage).nodeCalls(sb_call, sb1_call)
         .returnNode(genericReturnCaller).build();
 

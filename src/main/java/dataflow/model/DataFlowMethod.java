@@ -88,7 +88,7 @@ public class DataFlowMethod extends OwnerNode<CallableDeclaration<?>> {
     }
     this.addNodes(builder.nodes);
     // If it's added via the builder this method will be the owner, otherwise this node should have been added via a nodeCall
-    builder.nodes.forEach(n -> n.setOwner(this));
+    builder.nodes.stream().filter(n -> !n.getOwner().isPresent()).forEach(n -> n.setOwner(this));
 
     this.nodeCalls.clear();
     this.nodeCalls.addAll(builder.nodeCalls);
