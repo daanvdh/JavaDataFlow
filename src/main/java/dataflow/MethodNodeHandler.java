@@ -132,8 +132,12 @@ public class MethodNodeHandler {
 
   private Optional<DataFlowNode> handleMethodCallExpr(DataFlowGraph graph, DataFlowMethod method, Map<Node, DataFlowNode> overriddenValues, MethodCallExpr n,
       OwnedNode<?> owner) {
+
+    // Get the instance on which the method call is executed.
+    DataFlowNode instance = n.getScope().map(scope -> handleNode(graph, method, overriddenValues, scope, owner).orElse(null)).orElse(null);
+
     // Create the nodeCall
-    Optional<NodeCall> optionalCalledMethod = nodeCallFactory.create(owner, n);
+    Optional<NodeCall> optionalCalledMethod = nodeCallFactory.create(owner, n, instance);
     if (!optionalCalledMethod.isPresent()) {
       // logged in called method
       return Optional.empty();
