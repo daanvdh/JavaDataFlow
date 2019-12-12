@@ -102,6 +102,7 @@ public abstract class NodeRepresenter<T extends Node> {
   /**
    * Creates builder to build {@link NodeRepresenter}.
    *
+   * @param <T> The type of the {@link JavaParser} {@link Node} to represent.
    * @return created builder
    */
   public static <T extends Node> Builder<T, ? extends NodeRepresenter.Builder<T, ?>> builder() {

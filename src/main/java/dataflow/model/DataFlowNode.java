@@ -116,7 +116,7 @@ public class DataFlowNode extends OwnedNode<Node> {
   /**
    * Walks back over incoming edges until predicate is met or no incoming edges are present.
    *
-   * @see GraphUtil#walkBackUntil(DataFlowNode, Predicate)
+   * @see GraphUtil#walkBackUntil(DataFlowNode, Predicate, Predicate)
    * @param predicate The {@link Predicate} to meet
    * @param scope The scope for the variable, the search is stopped as soon as the scope does not hold and an empty list is returned.
    * @return {@link List} of {@link DataFlowNode}

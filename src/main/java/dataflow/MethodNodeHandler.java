@@ -72,6 +72,8 @@ public class MethodNodeHandler {
    * @param method {@link DataFlowMethod} to add {@link DataFlowNode} to
    * @param overriddenValues The values that have been overridden in previous iterations.
    * @param n The {@link Node} to handle. ChildNodes will recursively be handled if needed.
+   * @param owner The owner for the node to be created. This variable might be removed later, giving the caller of this method the responsibility to set the
+   *          owner.
    * @return An optional of the {@link DataFlowNode} of the input node. If multiple head nodes are created, (In case of a {@link BlockStmt}) the optional will
    *         be empty.
    */
