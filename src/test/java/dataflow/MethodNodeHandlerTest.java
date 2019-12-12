@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 
+import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +34,14 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 
 import dataflow.model.DataFlowGraph;
 import dataflow.model.DataFlowMethod;
 import dataflow.model.DataFlowNode;
 import dataflow.model.NodeCall;
 import dataflow.model.ParameterList;
+import util.MethodMatcher;
 
 /**
  * Unit test for {@link MethodNodeHandler}.
@@ -67,21 +70,12 @@ public class MethodNodeHandlerTest {
     NodeCall methodCall = NodeCall.builder().in(ParameterList.builder().nodes(Arrays.asList(DataFlowNode.builder().name("param1").build())).build())
         .returnNode(returnNode).build();
     DataFlowMethod method = DataFlowMethod.builder().build();
-    Mockito.when(nodeCallFactory.create(method, node)).thenReturn(Optional.of(methodCall));
+    mockNodeCallFactory(method, node, cu.findAll(NameExpr.class).get(0), methodCall);
 
     Optional<DataFlowNode> resultNode = execute(node, method);
 
     Assert.assertTrue(resultNode.isPresent());
-    Assert.assertEquals(returnNode, resultNode.get());
     Assert.assertEquals(Arrays.asList(methodCall), method.getNodeCalls());
-  }
-
-  private CompilationUnit createCompilationUnit(String code) {
-    CompilationUnit cu = StaticJavaParser.parse(//
-        "public class Claz {\n" + //
-            code + //
-            "}");
-    return cu;
   }
 
   @Test
@@ -97,13 +91,51 @@ public class MethodNodeHandlerTest {
     NodeCall methodCall = NodeCall.builder().in(ParameterList.builder().nodes(Arrays.asList(DataFlowNode.builder().name("param1").build())).build())
         .returnNode(returnNode).build();
     DataFlowMethod method = DataFlowMethod.builder().build();
-    Mockito.when(nodeCallFactory.create(method, node)).thenReturn(Optional.of(methodCall));
+    mockNodeCallFactory(method, node, cu.findAll(NameExpr.class).get(0), methodCall);
 
     Optional<DataFlowNode> resultNode = execute(node, method);
 
     Assert.assertTrue(resultNode.isPresent());
-    Assert.assertEquals(returnNode, resultNode.get());
     Assert.assertEquals(Arrays.asList(methodCall), method.getNodeCalls());
+  }
+
+  @Test
+  public void testHandleMethodCallExpr_methodConcatenation() {
+    CompilationUnit cu = createCompilationUnit(//
+        "  StringBuilder sb = new StringBuilder(); \n" + //
+            "  public StringBuilder met(String a, int b) {\n" + //
+            "    return sb.append(a).charAt(b);\n" + //
+            "  }\n"); //
+    DataFlowMethod method = DataFlowMethod.builder().build();
+
+    MethodCallExpr append = cu.findAll(MethodCallExpr.class).get(1);
+    DataFlowNode dfnSbAppend = DataFlowNode.builder().name("app").representedNode(append).build();
+    NodeCall appendCall = NodeCall.builder().name("nc1").returnNode(dfnSbAppend).build();
+    NameExpr instance = cu.findAll(NameExpr.class).get(0);
+    mockNodeCallFactory(method, append, instance, appendCall);
+
+    MethodCallExpr charrAt = cu.findAll(MethodCallExpr.class).get(0);
+    DataFlowNode dfnCharrAt = DataFlowNode.builder().name("charrAt").representedNode(charrAt).build();
+    NodeCall charrAtCall = NodeCall.builder().name("nc2").returnNode(dfnCharrAt).build();
+    mockNodeCallFactory(method, charrAt, append, charrAtCall);
+
+    Optional<DataFlowNode> resultNode = execute(charrAt, method);
+
+    Assert.assertTrue(resultNode.isPresent());
+    Assert.assertEquals(Arrays.asList(appendCall, charrAtCall), method.getNodeCalls());
+  }
+
+  private void mockNodeCallFactory(DataFlowMethod method, MethodCallExpr node, Node instance, NodeCall methodCall) {
+    Matcher<DataFlowNode> matchesInstance = MethodMatcher.of(DataFlowNode::getRepresentedNode, instance);
+    Mockito.when(nodeCallFactory.create(Mockito.eq(method), Mockito.eq(node), Mockito.argThat(matchesInstance))).thenReturn(Optional.of(methodCall));
+  }
+
+  private CompilationUnit createCompilationUnit(String code) {
+    CompilationUnit cu = StaticJavaParser.parse(//
+        "public class Claz {\n" + //
+            code + //
+            "}");
+    return cu;
   }
 
   private Optional<DataFlowNode> execute(MethodCallExpr node, DataFlowMethod method) {

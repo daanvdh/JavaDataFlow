@@ -49,29 +49,30 @@ public class NodeCallFactoryTest {
 
   @Test
   public void testCreate() {
-    String claz = //
+    CompilationUnit cu = StaticJavaParser.parse( //
         "public class Claz {\n" + //
             "  StringBuilder sb = new StringBuilder(); \n" + //
-            "  public void met(String a) {\n" + //
-            "    sb.append(a);\n" + //
+            "  public void met(int a) {\n" + //
+            "    sb.charAt(a);\n" + // returns a char
             "  }\n" + //
-            "}"; //
-    CompilationUnit cu = StaticJavaParser.parse(claz);
+            "}");
+
     List<MethodCallExpr> methodCalls = cu.findAll(MethodCallExpr.class);
     DataFlowMethod method = DataFlowMethod.builder().name("met").build();
     MethodCallExpr node = methodCalls.get(0);
+    DataFlowNode instance = DataFlowNode.builder().name("inst").build();
 
-    Optional<NodeCall> resultMethod = sut.create(method, node);
+    Optional<NodeCall> resultMethod = sut.create(method, node, instance);
 
     MethodCallExpr expectedRepresentedNode = cu.findAll(MethodCallExpr.class).get(0);
-    DataFlowNode expectedDfn = DataFlowNode.builder().name("nodeCall_append_return").representedNode(expectedRepresentedNode).build();
-    NodeCall expectedDfm =
-        NodeCall.builder().name("append").representedNode(expectedRepresentedNode).claz("StringBuilder").peckage("java.lang").returnNode(expectedDfn).build();
+    DataFlowNode expectedDfn = DataFlowNode.builder().name("nodeCall_charAt_return").type("char").representedNode(expectedRepresentedNode).build();
+    NodeCall expectedDfm = NodeCall.builder().name("charAt").representedNode(expectedRepresentedNode).claz("AbstractStringBuilder").peckage("java.lang")
+        .returnNode(expectedDfn).build();
 
     Assert.assertTrue(resultMethod.isPresent());
-    Assert.assertEquals("append", resultMethod.get().getName());
+    Assert.assertEquals("charAt", resultMethod.get().getName());
     Assert.assertEquals(expectedDfn, resultMethod.get().getReturnNode().get());
-    Assert.assertEquals("Unexpected instanceName", "sb", resultMethod.get().getInstanceName().get());
+    Assert.assertEquals("Unexpected instanceName", instance, resultMethod.get().getInstance().get());
     Assert.assertEquals(expectedDfm, resultMethod.get());
   }
 
