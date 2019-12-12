@@ -26,6 +26,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.resolution.declarations.ResolvedMethodDeclaration;
 import com.github.javaparser.resolution.declarations.ResolvedMethodLikeDeclaration;
+import com.github.javaparser.resolution.types.ResolvedPrimitiveType;
 import com.github.javaparser.resolution.types.ResolvedType;
 
 import dataflow.model.DataFlowGraph;
@@ -77,12 +78,24 @@ public class NodeCallFactory {
     if (rmd instanceof ResolvedMethodDeclaration) {
       ResolvedType returnType = ((ResolvedMethodDeclaration) rmd).getReturnType();
       if (!returnType.isVoid()) {
-        DataFlowNode returnNode = DataFlowNode.builder().name("nodeCall_" + methodCall.getName() + "_return").representedNode(node).build();
+        DataFlowNode returnNode =
+            DataFlowNode.builder().name("nodeCall_" + methodCall.getName() + "_return").representedNode(node).type(getType(returnType)).build();
         methodCall.setReturnNode(returnNode);
       }
     } else {
       LOG.warn("Not supported to create return node in NodeCall from resolved node of type {} in method {}", rmd.getClass(), method.getName());
     }
+  }
+
+  private String getType(ResolvedType returnType) {
+    String name;
+    if (returnType instanceof ResolvedPrimitiveType) {
+      name = ((ResolvedPrimitiveType) returnType).describe();
+    } else {
+      LOG.warn("Could not resolve the type of {}", returnType);
+      name = "UNKNOWN";
+    }
+    return name;
   }
 
 }
