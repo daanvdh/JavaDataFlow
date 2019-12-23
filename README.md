@@ -7,6 +7,8 @@ Nodes are always defined within a specific method, constructor, codeBlock.
 We refer to such a code block as owner. 
 Every Node has an owner. 
 Every owner can also have an owner, for instance a method is owned by a class.
+To make it possible to only parse a part of an application we model calls to a method and the dataflow inside the method itself separately. 
+At any moment the flow through a method can be linked to a call to that method to follow the flow of data though multiple methods or classes. 
 
 
 ## Example
@@ -57,10 +59,23 @@ Add the dependency below to the pom of your project.
 	</dependency>
 
 ## Definitions
-- The owner of a DataFlowNode represents structure in which the node is defined. 
+
+- Any **object or primitive** is modelled as a DataFlowNode. 
+  A DataFlowNode can have 0 or more input or output DataFlowEdge's.
+  Such an edge represents a data flow from one node to another. 
+- The **owner** of a DataFlowNode represents structure in which the node is defined. 
   For the method setA, the parameter inputA has a ParameterList as input. 
   The ParameterList has the DataFlowMethod for "setA" as owner. 
   The owner of the method is the DataFlowGraph representing Example.java
+- Each **usage of an object** is modelled as a separate DataFlowNode. 
+  A DataFlowNode representing the usage of an earlier defined object will contain an edge as input from either the last usage before that or the definition of the object. 
+  This way the order in which a node was used is maintained. 
+- A NodeCall represents a **call to another code block**, for instance a method call. 
+  If a NodeCall was called directly on an object, that object will be modelled as a DataFlowNode and the NodeCall will have a reference to that DataFlowNode via NodeCall::getInstance. 
+  That same DataFlowNode will then have a reference to the NodeCall via DataFlowNode::getNodeCall. 
+  A DataFlowNode can only have a single NodeCall, since every object usage is modelled as a separate node. 
+  If a NodeCall was not directly called on an object, it can be found via DataFlowMethod::getNodeCalls on the method in which the NodeCall was done. 
+  
 
 ## Features
 - JavaDataFlow uses [JavaParser](https://github.com/javaparser/javaparser/) for parsing the input classes. 
