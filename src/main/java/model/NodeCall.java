@@ -76,6 +76,7 @@ public class NodeCall extends OwnedNode<Node> {
     this.claz = builder.claz == null ? this.claz : builder.claz;
     this.peckage = builder.peckage == null ? this.peckage : builder.peckage;
     this.returnNode = builder.returnNode == null ? this.returnNode : builder.returnNode;
+    this.instance = builder.instance == null ? this.instance : builder.instance;
   }
 
   @Override
@@ -199,6 +200,7 @@ public class NodeCall extends OwnedNode<Node> {
     private String claz;
     private String peckage;
     private DataFlowNode returnNode;
+    private DataFlowNode instance;
 
     private Builder() {
       // Builder should only be constructed via the parent class
@@ -241,6 +243,11 @@ public class NodeCall extends OwnedNode<Node> {
 
     public NodeCall build() {
       return new NodeCall(this);
+    }
+
+    public Builder instance(DataFlowNode instance) {
+      this.instance = instance;
+      return null;
     }
 
   }

@@ -166,7 +166,12 @@ public class MethodNodeHandler {
     }
     calledMethod.setIn(params.build());
 
-    method.addMethodCall(calledMethod);
+    if (instance == null) {
+      method.addMethodCall(calledMethod);
+    } else {
+      instance.setNodeCall(calledMethod);
+    }
+
     calledMethod.getReturnNode().ifPresent(method::addNode);
     // Return the return node of the called method so that the return value can be assigned to the caller.
     return calledMethod.getReturnNode();
