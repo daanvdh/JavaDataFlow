@@ -42,7 +42,7 @@ public class GraphUtilTest {
     DataFlowGraph graph = GraphBuilder.withStartingNodes(NodeBuilder.ofParameter("setS", "a").to("setS.a").to("setS.b").to(NodeBuilder.ofField("s"))).build();
     DataFlowMethod m = graph.getMethods().iterator().next();
     DataFlowNode node = m.getChangedFields().get(0);
-    DataFlowNode expected = m.getInputParameters().getNodes().get(0);
+    DataFlowNode expected = m.getParameters().getNodes().get(0);
 
     List<DataFlowNode> result = GraphUtil.walkBackUntil(node, m::isInputBoundary, graph::owns);
     Assert.assertEquals(Collections.singletonList(expected), result);
@@ -52,7 +52,7 @@ public class GraphUtilTest {
   public void testWalkBackUntil_inputIsBoundaryNode() {
     DataFlowGraph graph = GraphBuilder.withStartingNodes(NodeBuilder.ofParameter("setS", "a").to("setS.a").to("setS.b").to(NodeBuilder.ofField("s"))).build();
     DataFlowMethod m = graph.getMethods().iterator().next();
-    DataFlowNode expected = m.getInputParameters().getNodes().get(0);
+    DataFlowNode expected = m.getParameters().getNodes().get(0);
 
     List<DataFlowNode> result = GraphUtil.walkBackUntil(expected, m::isInputBoundary, graph::owns);
     Assert.assertEquals(Collections.singletonList(expected), result);
@@ -69,7 +69,7 @@ public class GraphUtilTest {
     DataFlowGraph graph = withStartingNodes.build();
     DataFlowMethod m = graph.getMethods().iterator().next();
     DataFlowNode node = m.getChangedFields().get(0);
-    List<DataFlowNode> parameters = m.getInputParameters().getNodes();
+    List<DataFlowNode> parameters = m.getParameters().getNodes();
 
     List<DataFlowNode> result = GraphUtil.walkBackUntil(node, m::isInputBoundary, graph::owns);
     Assert.assertEquals(Arrays.asList(parameters.get(0), parameters.get(1)), result);

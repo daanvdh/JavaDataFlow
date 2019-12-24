@@ -99,7 +99,7 @@ public class NodeCall extends OwnedNode<Node> {
 
   public void setCalledMethod(DataFlowMethod calledMethod) {
     this.calledMethod = calledMethod;
-    this.in.connectTo(calledMethod.getInputParameters());
+    this.in.connectTo(calledMethod.getParameters());
     if (this.returnNode != null) {
       if (calledMethod.getReturnNode().isPresent()) {
         calledMethod.getReturnNode().get().addEdgeTo(returnNode);

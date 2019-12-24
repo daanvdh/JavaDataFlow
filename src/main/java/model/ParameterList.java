@@ -119,7 +119,7 @@ public class ParameterList extends OwnedNode<Node> {
 
   public boolean isInputParametersForMethod() {
     boolean isInputParam = false;
-    if (this.owner != null && this.owner instanceof DataFlowMethod && ((DataFlowMethod) this.owner).getInputParameters() == this) {
+    if (this.owner != null && this.owner instanceof DataFlowMethod && ((DataFlowMethod) this.owner).getParameters() == this) {
       isInputParam = true;
     }
     return isInputParam;

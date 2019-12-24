@@ -111,7 +111,7 @@ public class DataFlowMethod extends OwnerNode<CallableDeclaration<?>> {
     this.addNode(returnNode);
   }
 
-  public ParameterList getInputParameters() {
+  public ParameterList getParameters() {
     return inputParameters;
   }
 

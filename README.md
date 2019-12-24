@@ -81,6 +81,8 @@ Add the dependency below to the pom of your project.
 - JavaDataFlow uses [JavaParser](https://github.com/javaparser/javaparser/) for parsing the input classes. 
   Each DataFlowNode has a representedNode which is the JavaParser Node that it represents. 
   If you have a given JavaParser Node you can get the JavaDataFlowNode via DataFlowGraph::getNode. 
+- Collect all methods that where called on a given object by executing DataFlowNode::collectNodeCalls.
+  A scope can be added to this method to only find calls within a certain method or graph, you can for example use DataFlowMethod::owns.  
 
 ## Roadmap
 - Include Constructors in the JavaDataFlow graph. 

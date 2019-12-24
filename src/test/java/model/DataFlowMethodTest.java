@@ -45,7 +45,7 @@ public class DataFlowMethodTest {
   public void testDataFlowMethod_minimum() {
     DataFlowMethod dataFlowMethod = DataFlowMethod.builder().build();
 
-    Assert.assertNull("Unexpected inputParameters", dataFlowMethod.getInputParameters());
+    Assert.assertNull("Unexpected inputParameters", dataFlowMethod.getParameters());
     Assert.assertTrue("Unexpected inputFields", dataFlowMethod.getInputFields().isEmpty());
     Assert.assertTrue("Unexpected changedFields", dataFlowMethod.getChangedFields().isEmpty());
   }
@@ -54,7 +54,7 @@ public class DataFlowMethodTest {
   public void testDataFlowMethod_maximum() {
     DataFlowMethod dataFlowMethod = createAndFillBuilder().build();
 
-    Assert.assertEquals("Unexpected inputParameters", INPUT_PARAMETERS, dataFlowMethod.getInputParameters());
+    Assert.assertEquals("Unexpected inputParameters", INPUT_PARAMETERS, dataFlowMethod.getParameters());
     Assert.assertEquals("Unexpected inputFields", INPUT_FIELDS, dataFlowMethod.getInputFields());
     Assert.assertEquals("Unexpected changedFields", CHANGED_FIELDS, dataFlowMethod.getChangedFields());
   }

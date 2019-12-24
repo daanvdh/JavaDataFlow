@@ -78,7 +78,7 @@ public class MethodNodeHandlerTest {
     Assert.assertTrue(resultNode.isPresent());
     Assert.assertEquals(returnNode, resultNode.get());
     Assert.assertEquals(methodCall, method.getNode(sbUsage).getNodeCall().get());
-    Assert.assertTrue(method.getNodeCalls().isEmpty());
+    Assert.assertEquals(Arrays.asList(methodCall), method.getNodeCalls());
   }
 
   @Test
@@ -102,7 +102,7 @@ public class MethodNodeHandlerTest {
     Assert.assertTrue(resultNode.isPresent());
     Assert.assertEquals(returnNode, resultNode.get());
     Assert.assertEquals(methodCall, method.getNode(sbUsage).getNodeCall().get());
-    Assert.assertTrue(method.getNodeCalls().isEmpty());
+    Assert.assertEquals(Arrays.asList(methodCall), method.getNodeCalls());
   }
 
   @Test
@@ -131,7 +131,7 @@ public class MethodNodeHandlerTest {
     Assert.assertEquals(dfnCharrAt, resultNode.get());
     Assert.assertEquals(appendCall, method.getNode(instance).getNodeCall().get());
     Assert.assertEquals(charrAtCall, method.getNode(append).getNodeCall().get());
-    Assert.assertTrue(method.getNodeCalls().isEmpty());
+    Assert.assertEquals(Arrays.asList(appendCall, charrAtCall), method.getNodeCalls());
   }
 
   private void mockNodeCallFactory(DataFlowMethod method, MethodCallExpr node, Node instance, NodeCall methodCall) {

@@ -380,7 +380,7 @@ public class DataFlowGraphFactoryTest {
   }
 
   private Optional<String> assertMethodEqual(DataFlowMethod expMethod, DataFlowMethod equalMethod) {
-    Optional<String> parametersEqual = dfnTest.assertNodesEqual(expMethod.getInputParameters().getNodes(), equalMethod.getInputParameters().getNodes())
+    Optional<String> parametersEqual = dfnTest.assertNodesEqual(expMethod.getParameters().getNodes(), equalMethod.getParameters().getNodes())
         .map(s -> "for " + expMethod.getName() + " parameters not equal: " + s);
     Optional<String> nodesEqual = parametersEqual.isPresent() ? parametersEqual
         : dfnTest.assertNodesEqual(expMethod.getNodes(), equalMethod.getNodes()).map(s -> "for " + expMethod.getName() + ": " + s);
@@ -398,8 +398,8 @@ public class DataFlowGraphFactoryTest {
     EqualFeatureMatcher<DataFlowMethod, String> methodNameMatcher = new EqualFeatureMatcher<>(DataFlowMethod::getName, method.getName(), "methodName");
 
     EqualFeatureMatcher<DataFlowMethod, List<String>> parameterMatcher =
-        new EqualFeatureMatcher<>((m) -> m.getInputParameters().getNodes().stream().map(DataFlowNode::getName).collect(Collectors.toList()),
-            method.getInputParameters().getNodes().stream().map(DataFlowNode::getName).collect(Collectors.toList()), "methodParameters");
+        new EqualFeatureMatcher<>((m) -> m.getParameters().getNodes().stream().map(DataFlowNode::getName).collect(Collectors.toList()),
+            method.getParameters().getNodes().stream().map(DataFlowNode::getName).collect(Collectors.toList()), "methodParameters");
 
     return Matchers.allOf(methodNameMatcher, parameterMatcher);
   }

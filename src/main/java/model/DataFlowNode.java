@@ -18,10 +18,12 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -138,6 +140,25 @@ public class DataFlowNode extends OwnedNode<Node> {
    */
   public List<DataFlowNode> walkBackUntil(Predicate<DataFlowNode> predicate, Predicate<DataFlowNode> scope) {
     return GraphUtil.walkBackUntil(this, predicate, scope);
+  }
+
+  /**
+   * Returns all {@link NodeCall} that are called directly on this {@link DataFlowNode} or on any other {@link DataFlowNode} that has an {@link DataFlowEdge}
+   * resulting from this node. Only nodes within the defined scope are considered.
+   *
+   * @param scope The scope for searching for {@link NodeCall}s.
+   * @return List of {@link NodeCall}.
+   */
+  public List<NodeCall> collectNodeCalls(Predicate<DataFlowNode> scope) {
+    if (!scope.test(this)) {
+      return new ArrayList<>();
+    }
+    List<NodeCall> collect =
+        this.getOut().stream().map(DataFlowEdge::getTo).map(dfn -> dfn.collectNodeCalls(scope)).flatMap(List::stream).collect(Collectors.toList());
+    if (this.nodeCall != null) {
+      collect.add(nodeCall);
+    }
+    return collect;
   }
 
   /**
@@ -272,6 +293,12 @@ public class DataFlowNode extends OwnedNode<Node> {
     public Builder out(List<DataFlowEdge> out) {
       this.out.clear();
       this.out.addAll(out);
+      return this;
+    }
+
+    public Builder out(DataFlowEdge... out) {
+      this.out.clear();
+      this.out.addAll(Arrays.asList(out));
       return this;
     }
 
