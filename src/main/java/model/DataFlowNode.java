@@ -56,6 +56,13 @@ public class DataFlowNode extends OwnedNode<Node> {
    */
   private OwnedNode<?> owner;
 
+  /**
+   * If a method was called on the current {@link DataFlowNode} this {@link NodeCall} will represent that NodeCall. Each {@link DataFlowNode} can only have a
+   * single nodeCall, since each usage of a single variable is modeled to be a separate dataFlowNode. All method called on a given dataFlowNode can be collected
+   * by walking through the graph. This value will be null if no method was called.
+   */
+  private NodeCall nodeCall;
+
   public DataFlowNode(Node representedNode) {
     super(representedNode);
   }
@@ -72,6 +79,7 @@ public class DataFlowNode extends OwnedNode<Node> {
     this.out.addAll(builder.out);
     this.setType(builder.type);
     this.owner = builder.owner;
+    this.nodeCall = builder.nodeCall;
   }
 
   public List<DataFlowEdge> getIn() {
@@ -102,6 +110,14 @@ public class DataFlowNode extends OwnedNode<Node> {
 
   public void setType(String type) {
     this.type = type;
+  }
+
+  public Optional<NodeCall> getNodeCall() {
+    return Optional.ofNullable(nodeCall);
+  }
+
+  public void setNodeCall(NodeCall nodeCall) {
+    this.nodeCall = nodeCall;
   }
 
   public boolean isField() {
@@ -241,6 +257,7 @@ public class DataFlowNode extends OwnedNode<Node> {
     private List<DataFlowEdge> in = new ArrayList<>();
     private List<DataFlowEdge> out = new ArrayList<>();
     private String type;
+    private NodeCall nodeCall;
 
     private Builder() {
       // Builder should only be constructed via the parent class
@@ -265,6 +282,11 @@ public class DataFlowNode extends OwnedNode<Node> {
 
     public Builder owner(OwnedNode<?> owner) {
       this.owner = owner;
+      return this;
+    }
+
+    public Builder nodeCall(NodeCall nodeCall) {
+      this.nodeCall = nodeCall;
       return this;
     }
 
