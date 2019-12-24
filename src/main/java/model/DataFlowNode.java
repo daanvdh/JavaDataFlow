@@ -112,8 +112,8 @@ public class DataFlowNode extends OwnedNode<Node> {
     this.type = type;
   }
 
-  public NodeCall getNodeCall() {
-    return nodeCall;
+  public Optional<NodeCall> getNodeCall() {
+    return Optional.ofNullable(nodeCall);
   }
 
   public void setNodeCall(NodeCall nodeCall) {
