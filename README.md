@@ -55,7 +55,7 @@ Add the dependency below to the pom of your project.
 	<dependency>
 	  <groupId>com.github.daanvdh.javadataflow</groupId>
 	  <artifactId>JavaDataFlow</artifactId>
-	  <version>0.0.2</version>
+	  <version>0.0.4</version>
 	</dependency>
 
 ## Definitions
