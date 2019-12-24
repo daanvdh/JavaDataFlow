@@ -236,6 +236,11 @@ public class NodeCall extends OwnedNode<Node> {
       return this;
     }
 
+    public Builder instance(DataFlowNode instance) {
+      this.instance = instance;
+      return this;
+    }
+
     public Builder returnNode(DataFlowNode node) {
       this.returnNode = node;
       return this;
@@ -243,11 +248,6 @@ public class NodeCall extends OwnedNode<Node> {
 
     public NodeCall build() {
       return new NodeCall(this);
-    }
-
-    public Builder instance(DataFlowNode instance) {
-      this.instance = instance;
-      return null;
     }
 
   }
