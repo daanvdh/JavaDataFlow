@@ -37,8 +37,8 @@ A DataFlowGraph represents a single class.
 Now if we want to gather all input nodes to this class that can influence the output of the method "getA", we can do that as given below. 
 First get the given method. 
 Now we need to walk back until we reach a node that is an input parameter of a method, for this we can use the method DataFlowNode::isInputParameter. 
-For this example we don't want to go outside this class so we add dfg::owns as scope to the method walkBackUntil. 
-The scope determines when to stop walking over the nodes, this can become important multiple data flow graphs are connected to each other. 
+For this example we don't want to go outside of this class so we add dfg::owns as scope to the method walkBackUntil. 
+The scope determines when to stop walking over the nodes, this can become important if multiple data flow graphs are connected to each other. 
 However, this is currently not supported yet. 
 
 	DataFlowMethod getA = dfg.getMethods().stream().filter(m -> m.getName().equals("getA")).findFirst().get();
