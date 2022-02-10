@@ -1,3 +1,5 @@
+[![Join the chat at https://gitter.im/JavaDataFlow/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JavaDataFlow/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 # JavaDataFlow
 Creating Data Flow Graphs from java input classes
 
