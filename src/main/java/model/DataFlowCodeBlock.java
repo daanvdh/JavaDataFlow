@@ -11,9 +11,10 @@
 package model;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * A block of code in a java class. This contains a list of nodes that will be executed in sequence. A code block has a (possibly empty) list of codeBlock's
@@ -30,12 +31,10 @@ public class DataFlowCodeBlock extends OwnerNode { // TODO find the JavaParser N
 
   /**
    * A map of all CodeBlocks that might be executed inside this CodeBlock in order of occurrence. The CodeBlock is only executed if the {@link DataFlowNode} key
-   * evaluates to true.
+   * evaluates to true. The CodeBlockCondition can be null, if the DataFlowCodeBlock is always executed.
    */
-  // TODO What do we do with CodeBlocks that are always executed?
-  // TODO What do we do with CodeBlocks that are executed if the DataFlowNode evaaluates to false (in case of else statements)
   // TODO What do we do with if-else statements, where one node should be false (the if-statement) and the next should be true (the else-if-statement).
-  private LinkedHashMap<DataFlowNode, DataFlowCodeBlock> called;
+  private List<Pair<CodeBlockCondition, DataFlowCodeBlock>> called;
 
   /** List of {@link DataFlowNode}s that are executed inside this CodeBlock. */
   private List<DataFlowNode> dataFlowNodes;
