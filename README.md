@@ -1,5 +1,5 @@
 [![Join the chat at https://gitter.im/JavaDataFlow/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/JavaDataFlow/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.javaparser/javaparser-core.svg)](https://search.maven.org/search?q=g:com.github.daanvdh.javadataflow)
+[![maven-central](https://img.shields.io/maven-central/v/com.github.daanvdh.javadataflow/JavaDataFlow.svg)](https://search.maven.org/search?q=g:com.github.daanvdh.javadataflow)
 
 # JavaDataFlow
 Creating Data Flow Graphs from java input classes
