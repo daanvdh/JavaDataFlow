@@ -36,8 +36,6 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 
-import factory.MethodNodeHandler;
-import factory.NodeCallFactory;
 import model.DataFlowGraph;
 import model.DataFlowMethod;
 import model.DataFlowNode;
@@ -72,11 +70,14 @@ public class MethodNodeHandlerTest {
     NodeCall methodCall = NodeCall.builder().in(ParameterList.builder().nodes(Arrays.asList(DataFlowNode.builder().name("param1").build())).build())
         .returnNode(returnNode).build();
     DataFlowMethod method = DataFlowMethod.builder().build();
-    mockNodeCallFactory(method, node, cu.findAll(NameExpr.class).get(0), methodCall);
+    NameExpr sbUsage = cu.findAll(NameExpr.class).get(0);
+    mockNodeCallFactory(method, node, sbUsage, methodCall);
 
     Optional<DataFlowNode> resultNode = execute(node, method);
 
     Assert.assertTrue(resultNode.isPresent());
+    Assert.assertEquals(returnNode, resultNode.get());
+    Assert.assertEquals(methodCall, method.getNode(sbUsage).getNodeCall().get());
     Assert.assertEquals(Arrays.asList(methodCall), method.getNodeCalls());
   }
 
@@ -93,11 +94,14 @@ public class MethodNodeHandlerTest {
     NodeCall methodCall = NodeCall.builder().in(ParameterList.builder().nodes(Arrays.asList(DataFlowNode.builder().name("param1").build())).build())
         .returnNode(returnNode).build();
     DataFlowMethod method = DataFlowMethod.builder().build();
-    mockNodeCallFactory(method, node, cu.findAll(NameExpr.class).get(0), methodCall);
+    NameExpr sbUsage = cu.findAll(NameExpr.class).get(0);
+    mockNodeCallFactory(method, node, sbUsage, methodCall);
 
     Optional<DataFlowNode> resultNode = execute(node, method);
 
     Assert.assertTrue(resultNode.isPresent());
+    Assert.assertEquals(returnNode, resultNode.get());
+    Assert.assertEquals(methodCall, method.getNode(sbUsage).getNodeCall().get());
     Assert.assertEquals(Arrays.asList(methodCall), method.getNodeCalls());
   }
 
@@ -124,6 +128,9 @@ public class MethodNodeHandlerTest {
     Optional<DataFlowNode> resultNode = execute(charrAt, method);
 
     Assert.assertTrue(resultNode.isPresent());
+    Assert.assertEquals(dfnCharrAt, resultNode.get());
+    Assert.assertEquals(appendCall, method.getNode(instance).getNodeCall().get());
+    Assert.assertEquals(charrAtCall, method.getNode(append).getNodeCall().get());
     Assert.assertEquals(Arrays.asList(appendCall, charrAtCall), method.getNodeCalls());
   }
 

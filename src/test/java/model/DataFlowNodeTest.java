@@ -106,6 +106,38 @@ public class DataFlowNodeTest {
     verifyHashCode_Different(DataFlowNode.Builder::out, Collections.singletonList(DataFlowEdge.builder().build()));
   }
 
+  @Test
+  public void testCollectNodeCalls_empty() {
+    Assert.assertTrue(DataFlowNode.builder().build().collectNodeCalls(x -> true).isEmpty());
+  }
+
+  @Test
+  public void testCollectNodeCalls() {
+    DataFlowNode n3 = DataFlowNode.builder().nodeCall(NodeCall.builder().build()).build();
+    DataFlowNode n2 = DataFlowNode.builder().out(DataFlowEdge.builder().to(n3).build()).build();
+    DataFlowNode n1 = DataFlowNode.builder().out(DataFlowEdge.builder().to(n2).build()).nodeCall(NodeCall.builder().build()).build();
+
+    Assert.assertEquals(2, n1.collectNodeCalls(x -> true).size());
+  }
+
+  @Test
+  public void testCollectNodeCalls_predicate() {
+    DataFlowNode n3 = DataFlowNode.builder().nodeCall(NodeCall.builder().build()).build();
+    DataFlowNode n2 = DataFlowNode.builder().out(DataFlowEdge.builder().to(n3).build()).build();
+    DataFlowNode n1 = DataFlowNode.builder().out(DataFlowEdge.builder().to(n2).build()).nodeCall(NodeCall.builder().build()).build();
+
+    Assert.assertEquals(1, n1.collectNodeCalls(x -> !x.equals(n3)).size());
+  }
+
+  @Test
+  public void testCollectNodeCalls_predicateFalseForFirst() {
+    DataFlowNode n3 = DataFlowNode.builder().nodeCall(NodeCall.builder().build()).build();
+    DataFlowNode n2 = DataFlowNode.builder().out(DataFlowEdge.builder().to(n3).build()).build();
+    DataFlowNode n1 = DataFlowNode.builder().out(DataFlowEdge.builder().to(n2).build()).nodeCall(NodeCall.builder().build()).build();
+
+    Assert.assertEquals(0, n1.collectNodeCalls(x -> !x.equals(n1)).size());
+  }
+
   /**
    * Assert that the names and all incoming and outgoing edges are equal, regardless of the order.
    *

@@ -100,7 +100,7 @@ public class GraphBuilder {
       break;
     case METHOD_PARAMETER:
       method = getOrCreateMethod(graph, methods, nodeBuilder.getMethod());
-      if (method.getInputParameters() == null) {
+      if (method.getParameters() == null) {
         method.setInputParameters(ParameterList.builder().build());
       }
       // TODO if we want to influence the order of the parameters,

@@ -68,9 +68,8 @@ public class NodeCallFactory {
   }
 
   private NodeCall createMethodCall(OwnedNode<?> owner, ResolvedMethodLikeDeclaration resolved, MethodCallExpr node, DataFlowNode instance) {
-    NodeCall methodCall =
-        NodeCall.builder().name(resolved.getName()).claz(resolved.getClassName()).peckage(resolved.getPackageName()).owner(owner).representedNode(node).build();
-    methodCall.setInstance(instance);
+    NodeCall methodCall = NodeCall.builder().name(resolved.getName()).claz(resolved.getClassName()).peckage(resolved.getPackageName()).owner(owner)
+        .representedNode(node).instance(instance).build();
     setReturn(methodCall, owner, node, resolved);
     return methodCall;
   }

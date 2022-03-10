@@ -111,7 +111,7 @@ public class DataFlowMethod extends OwnerNode<CallableDeclaration<?>> {
     this.addNode(returnNode);
   }
 
-  public ParameterList getInputParameters() {
+  public ParameterList getParameters() {
     return inputParameters;
   }
 
@@ -180,7 +180,8 @@ public class DataFlowMethod extends OwnerNode<CallableDeclaration<?>> {
   }
 
   /**
-   * @return List of {@link DataFlowMethod}s containing both the input and output methods.
+   * @return List of {@link NodeCall}s representing the method calls that where not called directly on an object, for instance static or methods from within the
+   *         same class.
    */
   public List<NodeCall> getNodeCalls() {
     return this.nodeCalls;

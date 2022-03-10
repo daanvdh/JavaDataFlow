@@ -18,10 +18,12 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -56,6 +58,13 @@ public class DataFlowNode extends OwnedNode<Node> {
    */
   private OwnedNode<?> owner;
 
+  /**
+   * If a method was called on the current {@link DataFlowNode} this {@link NodeCall} will represent that NodeCall. Each {@link DataFlowNode} can only have a
+   * single nodeCall, since each usage of a single variable is modeled to be a separate dataFlowNode. All method called on a given dataFlowNode can be collected
+   * by walking through the graph. This value will be null if no method was called.
+   */
+  private NodeCall nodeCall;
+
   public DataFlowNode(Node representedNode) {
     super(representedNode);
   }
@@ -72,6 +81,7 @@ public class DataFlowNode extends OwnedNode<Node> {
     this.out.addAll(builder.out);
     this.setType(builder.type);
     this.owner = builder.owner;
+    this.nodeCall = builder.nodeCall;
   }
 
   public List<DataFlowEdge> getIn() {
@@ -104,6 +114,14 @@ public class DataFlowNode extends OwnedNode<Node> {
     this.type = type;
   }
 
+  public Optional<NodeCall> getNodeCall() {
+    return Optional.ofNullable(nodeCall);
+  }
+
+  public void setNodeCall(NodeCall nodeCall) {
+    this.nodeCall = nodeCall;
+  }
+
   public boolean isField() {
     return this.getOwner().map(DataFlowGraph.class::isInstance).orElse(false);
   }
@@ -122,6 +140,25 @@ public class DataFlowNode extends OwnedNode<Node> {
    */
   public List<DataFlowNode> walkBackUntil(Predicate<DataFlowNode> predicate, Predicate<DataFlowNode> scope) {
     return GraphUtil.walkBackUntil(this, predicate, scope);
+  }
+
+  /**
+   * Returns all {@link NodeCall} that are called directly on this {@link DataFlowNode} or on any other {@link DataFlowNode} that has an {@link DataFlowEdge}
+   * resulting from this node. Only nodes within the defined scope are considered.
+   *
+   * @param scope The scope for searching for {@link NodeCall}s.
+   * @return List of {@link NodeCall}.
+   */
+  public List<NodeCall> collectNodeCalls(Predicate<DataFlowNode> scope) {
+    if (!scope.test(this)) {
+      return new ArrayList<>();
+    }
+    List<NodeCall> collect =
+        this.getOut().stream().map(DataFlowEdge::getTo).map(dfn -> dfn.collectNodeCalls(scope)).flatMap(List::stream).collect(Collectors.toList());
+    if (this.nodeCall != null) {
+      collect.add(nodeCall);
+    }
+    return collect;
   }
 
   /**
@@ -241,6 +278,7 @@ public class DataFlowNode extends OwnedNode<Node> {
     private List<DataFlowEdge> in = new ArrayList<>();
     private List<DataFlowEdge> out = new ArrayList<>();
     private String type;
+    private NodeCall nodeCall;
 
     private Builder() {
       // Builder should only be constructed via the parent class
@@ -258,6 +296,12 @@ public class DataFlowNode extends OwnedNode<Node> {
       return this;
     }
 
+    public Builder out(DataFlowEdge... out) {
+      this.out.clear();
+      this.out.addAll(Arrays.asList(out));
+      return this;
+    }
+
     public Builder type(String type) {
       this.type = type;
       return this;
@@ -265,6 +309,11 @@ public class DataFlowNode extends OwnedNode<Node> {
 
     public Builder owner(OwnedNode<?> owner) {
       this.owner = owner;
+      return this;
+    }
+
+    public Builder nodeCall(NodeCall nodeCall) {
+      this.nodeCall = nodeCall;
       return this;
     }
 
