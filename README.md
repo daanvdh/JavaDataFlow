@@ -47,7 +47,7 @@ However, this is currently not supported yet.
 	List<DataFlowNode> inputNodes = getA.getReturnNode().get().walkBackUntil(DataFlowNode::isInputParameter, dfg::owns);
 	System.out.println(inputNodes.get(0).getName());
     
-The above code will output the name "inputA". 
+The above code will output the name "inputA". All code above is also given in an [example project](https://github.com/daanvdh/JavaDataFlowExample). 
 
 ## Setup 
 Add the dependency below to the pom of your project. 
@@ -55,7 +55,7 @@ Add the dependency below to the pom of your project.
 	<dependency>
 	  <groupId>com.github.daanvdh.javadataflow</groupId>
 	  <artifactId>JavaDataFlow</artifactId>
-	  <version>0.0.2</version>
+	  <version>0.0.3</version>
 	</dependency>
 
 ## Definitions
