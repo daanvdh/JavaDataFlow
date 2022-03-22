@@ -21,9 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.expr.SimpleName;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 import com.github.javaparser.ast.stmt.ReturnStmt;
-import com.github.javaparser.printer.Printable;
+import com.github.javaparser.printer.Stringable;
 
 import model.DataFlowNode;
 import model.OwnedNode;
@@ -45,8 +46,10 @@ public class DataFlowNodeFactory {
 
     if (nodeWithName instanceof NodeWithSimpleName) {
       builder.name(((NodeWithSimpleName<?>) nodeWithName).getNameAsString());
-    } else if (nodeWithName instanceof Printable) {
-      builder.name(((Printable) nodeWithName).asString());
+    } else if (nodeWithName instanceof Stringable) {
+      builder.name(((Stringable) nodeWithName).asString());
+    } else if (nodeWithName instanceof SimpleName) {
+      builder.name(((SimpleName) nodeWithName).asString());
     } else {
       LOG.warn("Not supported to add a name to a created DataFlowNode for node of type {}, input node is {}", n.getClass(), n);
     }
