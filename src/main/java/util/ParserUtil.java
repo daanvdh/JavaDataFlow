@@ -34,7 +34,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.resolution.Resolvable;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserFieldDeclaration;
 import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserParameterDeclaration;
-import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserSymbolDeclaration;
+import com.github.javaparser.symbolsolver.javaparsermodel.declarations.JavaParserVariableDeclaration;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import model.DataFlowMethod;
@@ -58,8 +58,8 @@ public class ParserUtil {
       resolvedNode = ((JavaParserFieldDeclaration) resolved).getVariableDeclarator();
     } else if (resolved instanceof JavaParserParameterDeclaration) {
       resolvedNode = ((JavaParserParameterDeclaration) resolved).getWrappedNode();
-    } else if (resolved instanceof JavaParserSymbolDeclaration) {
-      resolvedNode = ((JavaParserSymbolDeclaration) resolved).getWrappedNode();
+    } else if (resolved instanceof JavaParserVariableDeclaration) {
+      resolvedNode = ((JavaParserVariableDeclaration) resolved).getWrappedNode();
     } else {
       LOG.warn("In method {}, resolving is not supported for node {} of type {}", method.getName(), node, resolved == null ? null : resolved.getClass());
     }

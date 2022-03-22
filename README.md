@@ -35,7 +35,7 @@ A DataFlowGraph represents a single class.
 	String input = "/relativePath/Example.java";
 	StaticJavaDataFlow.getConfig().setProjectPaths(projectPath);
 	DataFlowGraph dfg = JavaDataFlow.create(projectPath + input);
- 
+
 Now if we want to gather all input nodes to this class that can influence the output of the method "getA", we can do that as given below. 
 First get the given method. 
 Now we need to walk back until we reach a node that is an input parameter of a method, for this we can use the method DataFlowNode::isInputParameter. 
@@ -46,7 +46,7 @@ However, this is currently not supported yet.
 	DataFlowMethod getA = dfg.getMethods().stream().filter(m -> m.getName().equals("getA")).findFirst().get();
 	List<DataFlowNode> inputNodes = getA.getReturnNode().get().walkBackUntil(DataFlowNode::isInputParameter, dfg::owns);
 	System.out.println(inputNodes.get(0).getName());
-    
+
 The above code will output the name "inputA". 
 
 ## Setup 
@@ -55,7 +55,7 @@ Add the dependency below to the pom of your project.
 	<dependency>
 	  <groupId>com.github.daanvdh.javadataflow</groupId>
 	  <artifactId>JavaDataFlow</artifactId>
-	  <version>0.0.4</version>
+	  <version>0.0.5</version>
 	</dependency>
 
 ## Definitions

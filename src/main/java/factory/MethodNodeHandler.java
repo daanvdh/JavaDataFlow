@@ -268,28 +268,28 @@ public class MethodNodeHandler {
     return Optional.of(flowNode);
   }
 
-  /**
-   * TODO javadoc
-   *
-   * @param graph
-   * @param method
-   * @param overwriddenValues
-   * @param node
-   * @return
-   */
   private Optional<DataFlowNode> getDataFlowNode(DataFlowGraph graph, DataFlowMethod method, Map<Node, DataFlowNode> overwriddenValues, Node node) {
     Optional<Node> optionalResolvedNode = parserUtil.getJavaParserNode(method, node);
     DataFlowNode flowNode = null;
     if (optionalResolvedNode.isPresent()) {
       Node resolvedNode = optionalResolvedNode.get();
-      flowNode = overwriddenValues.get(resolvedNode);
-      flowNode = flowNode != null ? flowNode : graph.getNode(resolvedNode);
-      flowNode = flowNode != null ? flowNode : method.getNode(resolvedNode);
+      flowNode = getLastFlowNode(graph, method, overwriddenValues, resolvedNode);
+      flowNode = (flowNode != null && !(resolvedNode instanceof VariableDeclarationExpr)) ? flowNode
+          : ((VariableDeclarationExpr) resolvedNode).getVariables().stream().map(child -> getLastFlowNode(graph, method, overwriddenValues, child))
+              .filter(n -> n != null).findFirst().orElse(null);
     }
     if (flowNode == null) {
-      LOG.warn("In method {} did not resolve the type of node {} of type {}", method.getName(), node, node.getClass());
+      LOG.warn("In method {} did not resolve the type of node {} of type {}, resolvedNode was {}", method.getName(), node, node.getClass(),
+          optionalResolvedNode);
     }
     return Optional.ofNullable(flowNode);
+  }
+
+  private DataFlowNode getLastFlowNode(DataFlowGraph graph, DataFlowMethod method, Map<Node, DataFlowNode> overwriddenValues, Node resolvedNode) {
+    DataFlowNode flowNode = overwriddenValues.get(resolvedNode);
+    flowNode = flowNode != null ? flowNode : method.getNode(resolvedNode);
+    flowNode = flowNode != null ? flowNode : graph.getNode(resolvedNode);
+    return flowNode;
   }
 
   private String nameForInBetweenNode(DataFlowMethod method, Map<Node, DataFlowNode> overriddenValues, Node realAssignedJP,
