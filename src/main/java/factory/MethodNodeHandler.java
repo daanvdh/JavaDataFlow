@@ -274,7 +274,7 @@ public class MethodNodeHandler {
     if (optionalResolvedNode.isPresent()) {
       Node resolvedNode = optionalResolvedNode.get();
       flowNode = getLastFlowNode(graph, method, overwriddenValues, resolvedNode);
-      flowNode = (flowNode != null && !(resolvedNode instanceof VariableDeclarationExpr)) ? flowNode
+      flowNode = (flowNode != null || !(resolvedNode instanceof VariableDeclarationExpr)) ? flowNode
           : ((VariableDeclarationExpr) resolvedNode).getVariables().stream().map(child -> getLastFlowNode(graph, method, overwriddenValues, child))
               .filter(n -> n != null).findFirst().orElse(null);
     }
