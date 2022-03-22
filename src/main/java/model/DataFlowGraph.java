@@ -178,13 +178,13 @@ public class DataFlowGraph extends OwnerNode<ClassOrInterfaceDeclaration> {
   }
 
   @Override
-  Collection<OwnerNode<?>> getOwnedOwners() {
+  public Collection<OwnerNode<?>> getOwnedOwners() {
     // streaming and collecting needed for casting.
     return this.methods.values().stream().collect(Collectors.toList());
   }
 
   @Override
-  Collection<DataFlowNode> getDirectOwnedNodes() {
+  public Collection<DataFlowNode> getDirectOwnedNodes() {
     return this.fields;
   }
 

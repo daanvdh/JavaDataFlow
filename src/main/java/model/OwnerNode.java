@@ -66,11 +66,11 @@ public abstract class OwnerNode<T extends Node> extends OwnedNode<T> {
   /**
    * @return all nodes directly owned by this {@link OwnerNode} for which it holds that
    */
-  abstract Collection<OwnerNode<?>> getOwnedOwners();
+  abstract public Collection<OwnerNode<?>> getOwnedOwners();
 
   /**
    * @return all {@link DataFlowNode}s directly owned by this {@link OwnerNode}.
    */
-  abstract Collection<DataFlowNode> getDirectOwnedNodes();
+  abstract public Collection<DataFlowNode> getDirectOwnedNodes();
 
 }

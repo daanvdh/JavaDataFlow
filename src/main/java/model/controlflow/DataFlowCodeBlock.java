@@ -8,7 +8,7 @@
  * interruption) however caused and on any theory of liability, whether in contract, strict liability, or tort (including
  * negligence or otherwise) arising in any way out of the use of this software, even if advised of the possibility of such damage.
  */
-package model;
+package model.controlflow;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,13 +16,19 @@ import java.util.Optional;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.github.javaparser.ast.stmt.BlockStmt;
+
+import model.DataFlowNode;
+import model.OwnedNode;
+import model.OwnerNode;
+
 /**
  * A block of code in a java class. This contains a list of nodes that will be executed in sequence. A code block has a (possibly empty) list of codeBlock's
  * that succeed this codeBlock as well as a list preceeding it.
  *
  * @author daan.vandenheuvel
  */
-public class DataFlowCodeBlock extends OwnerNode { // TODO find the JavaParser Node that represents a code block and add it as type argument.
+public class DataFlowCodeBlock extends OwnerNode<BlockStmt> { // TODO find the JavaParser Node that represents a code block and add it as type argument.
 
   // TODO methods and classes should extend this.
 
@@ -40,21 +46,45 @@ public class DataFlowCodeBlock extends OwnerNode { // TODO find the JavaParser N
   private List<DataFlowNode> dataFlowNodes;
 
   @Override
-  Collection getOwnedOwners() {
+  public Collection<OwnerNode<?>> getOwnedOwners() {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  Collection getDirectOwnedNodes() {
+  public Collection<DataFlowNode> getDirectOwnedNodes() {
     // TODO Auto-generated method stub
     return null;
   }
 
   @Override
-  public Optional getOwner() {
+  public Optional<OwnedNode<?>> getOwner() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  public List<DataFlowCodeBlock> getCalledBy() {
+    return calledBy;
+  }
+
+  public void setCalledBy(List<DataFlowCodeBlock> calledBy) {
+    this.calledBy = calledBy;
+  }
+
+  public List<Pair<CodeBlockCondition, DataFlowCodeBlock>> getCalled() {
+    return called;
+  }
+
+  public void setCalled(List<Pair<CodeBlockCondition, DataFlowCodeBlock>> called) {
+    this.called = called;
+  }
+
+  public List<DataFlowNode> getDataFlowNodes() {
+    return dataFlowNodes;
+  }
+
+  public void setDataFlowNodes(List<DataFlowNode> dataFlowNodes) {
+    this.dataFlowNodes = dataFlowNodes;
   }
 
 }
